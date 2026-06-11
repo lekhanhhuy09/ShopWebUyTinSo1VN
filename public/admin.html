@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Panel — Shop LK Huy</title>
+<link rel="icon" href="https://sf-static.upanhlaylink.com/img/image_2026060946fe6a194bb186109153ddf65f386d60.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#030305;--s1:#0a0a12;--s2:#0f0f1a;
+  --border:rgba(99,102,241,0.15);--accent:#6366f1;--accent2:#8b5cf6;
+  --text:#f1f5f9;--muted:#64748b;
+  --success:#22c55e;--danger:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;
+}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+  background-image:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(99,102,241,0.08),transparent 55%),
+  radial-gradient(ellipse 40% 30% at 100% 100%,rgba(139,92,246,0.05),transparent);}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{
+  width:100%;max-width:380px;
+  background:rgba(10,10,18,0.95);
+  border:1px solid rgba(99,102,241,0.2);
+  border-radius:20px;padding:36px 32px;
+  box-shadow:0 0 0 1px rgba(99,102,241,0.05),0 32px 80px rgba(0,0,0,0.9),0 0 60px rgba(99,102,241,0.06);
+}
+.login-logo{text-align:center;margin-bottom:24px;}
+.login-logo img{width:60px;height:60px;border-radius:14px;border:2px solid rgba(99,102,241,0.3);box-shadow:0 0 24px rgba(99,102,241,0.25);}
+.login-title{font-size:18px;font-weight:900;margin-top:10px;background:linear-gradient(135deg,#a5b4fc,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.login-sub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;margin-top:3px;}
+.login-field{margin-bottom:16px;}
+.login-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.login-field input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.login-field input:focus{border-color:rgba(99,102,241,0.5);box-shadow:0 0 0 3px rgba(99,102,241,0.1);}
+.login-field input::placeholder{color:var(--muted);}
+.login-btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:.18s;font-family:'Inter',sans-serif;}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.35);}
+.login-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;padding:9px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;}
+
+/* ── MAIN LAYOUT ── */
+#main-screen{display:none;min-height:100vh;}
+nav{position:sticky;top:0;z-index:200;background:rgba(3,3,5,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1300px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;}
+.nav-left{display:flex;align-items:center;gap:10px;}
+.nav-logo{width:30px;height:30px;border-radius:8px;border:1.5px solid rgba(99,102,241,0.35);}
+.nav-brand{font-size:14px;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.admin-badge{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.08em;}
+.nav-tabs{display:flex;gap:2px;}
+.ntab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);transition:.15s;letter-spacing:.02em;}
+.ntab:hover,.ntab.active{background:rgba(99,102,241,0.12);color:#a5b4fc;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-time{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+.btn-logout{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.03);color:var(--muted);transition:.15s;}
+.btn-logout:hover{color:var(--danger);border-color:rgba(239,68,68,0.25);}
+
+/* ── CONTENT ── */
+.content{max-width:1300px;margin:0 auto;padding:22px 20px;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;filter:blur(20px);opacity:.3;}
+.sc-users::before{background:#6366f1;}
+.sc-bal::before{background:#f59e0b;}
+.sc-items::before{background:#22c55e;}
+.sc-hist::before{background:#06b6d4;}
+.stat-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.stat-val{font-size:26px;font-weight:900;}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.c-purple{color:#a5b4fc;}.c-amber{color:var(--amber);}.c-green{color:var(--success);}.c-cyan{color:var(--cyan);}
+
+/* ── PANEL ── */
+.panel{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.01);}
+.panel-icon{font-size:18px;}
+.panel-title{font-size:14px;font-weight:700;}
+.panel-sub{font-size:11px;color:var(--muted);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+.panel-body{padding:16px 18px;}
+
+/* ── SEPARATOR ── */
+.sep{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.2),transparent);}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:left;}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(99,102,241,0.04);}
+.email-cell{font-family:'JetBrains Mono',monospace;font-size:12px;}
+.bal-cell{font-weight:700;color:var(--amber);font-family:'JetBrains Mono',monospace;}
+.ip-cell{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.time-cell{font-size:11px;color:var(--muted);}
+
+/* ── BUTTONS ── */
+.btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.15s;font-family:'Inter',sans-serif;}
+.btn-green{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.25);}
+.btn-green:hover{background:rgba(34,197,94,0.18);}
+.btn-red{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.25);}
+.btn-red:hover{background:rgba(239,68,68,0.18);}
+.btn-blue{background:rgba(99,102,241,0.1);color:#a5b4fc;border:1px solid rgba(99,102,241,0.25);}
+.btn-blue:hover{background:rgba(99,102,241,0.18);}
+.btn-amber{background:rgba(245,158,11,0.1);color:#fcd34d;border:1px solid rgba(245,158,11,0.25);}
+.btn-amber:hover{background:rgba(245,158,11,0.18);}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;padding:9px 20px;border-radius:10px;font-size:13px;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(99,102,241,0.3);}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:9px 20px;border-radius:10px;font-size:13px;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.form-field input{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:9px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.form-field input:focus{border-color:rgba(99,102,241,0.4);box-shadow:0 0 0 3px rgba(99,102,241,0.08);}
+.form-field input::placeholder{color:var(--muted);}
+.form-full{grid-column:1/-1;}
+
+/* ── TOPUP MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:#0a0a12;border:1px solid rgba(99,102,241,0.2);border-radius:20px;padding:28px;max-width:400px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.9);}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-email{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--accent);margin-bottom:16px;}
+.modal-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;color:var(--text);font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;outline:none;margin-bottom:8px;transition:.2s;}
+.modal-input:focus{border-color:rgba(34,197,94,0.4);}
+.modal-hint{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-cancel{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--muted);font-size:13px;cursor:pointer;}
+.modal-confirm{flex:1;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;}
+.modal-confirm:hover{transform:translateY(-1px);}
+
+/* ── BADGE ── */
+.badge{padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.b-green{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.2);}
+.b-amber{background:rgba(245,158,11,0.1);color:#fcd34d;border:1px solid rgba(245,158,11,0.2);}
+.b-red{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.2);}
+.b-blue{background:rgba(99,102,241,0.1);color:#a5b4fc;border:1px solid rgba(99,102,241,0.2);}
+
+/* ── TOAST ── */
+.tw{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:7px;}
+.ti{padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;background:#0f0f1a;border:1px solid rgba(255,255,255,0.08);color:#fff;box-shadow:0 8px 28px rgba(0,0,0,0.6);animation:tIn .3s ease;max-width:280px;}
+@keyframes tIn{from{transform:translateX(120%);opacity:0;}to{transform:none;opacity:1;}}
+.ti-ok{border-color:rgba(34,197,94,0.3);}.ti-err{border-color:rgba(239,68,68,0.3);}
+
+.empty-row td{text-align:center;padding:32px;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+audio{display:none;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="https://sf-static.upanhlaylink.com/img/image_2026060946fe6a194bb186109153ddf65f386d60.jpg" alt="">
+      <div class="login-title">ADMIN PANEL</div>
+      <div class="login-sub">SHOP LE KHANH HUY</div>
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-field">
+      <label>Mật Khẩu Admin</label>
+      <input type="password" id="admin-pass" placeholder="Nhập mật khẩu admin..." autocomplete="off">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doAdminLogin()">🔐 Đăng Nhập Admin</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-screen">
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-left">
+        <img class="nav-logo" src="https://sf-static.upanhlaylink.com/img/image_2026060946fe6a194bb186109153ddf65f386d60.jpg" alt="">
+        <span class="nav-brand">ADMIN PANEL</span>
+        <span class="admin-badge">⚡ ADMIN</span>
+      </div>
+      <div class="nav-tabs">
+        <button class="ntab active" onclick="showPage('dashboard')">📊 Dashboard</button>
+        <button class="ntab" onclick="showPage('users')">👥 Users</button>
+        <button class="ntab" onclick="showPage('products')">📦 Sản Phẩm</button>
+        <button class="ntab" onclick="showPage('pending')">⏳ Duyệt Nạp</button>
+        <button class="ntab" onclick="showPage('history')">📜 Lịch Sử</button>
+      </div>
+      <div class="nav-right">
+        <span class="nav-time" id="nav-time"></span>
+        <button class="btn-logout" onclick="doLogout()">Đăng Xuất</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card sc-users"><div class="stat-label">Tổng Users</div><div class="stat-val c-purple" id="st-users">...</div><div class="stat-sub">Tài khoản đã đăng ký</div></div>
+        <div class="stat-card sc-bal"><div class="stat-label">Tổng Đã Nạp</div><div class="stat-val c-amber" id="st-bal">...</div><div class="stat-sub">Tổng tiền đã cộng</div></div>
+        <div class="stat-card sc-items"><div class="stat-label">Sản Phẩm</div><div class="stat-val c-green" id="st-items">...</div><div class="stat-sub">Đang bán</div></div>
+        <div class="stat-card sc-hist"><div class="stat-label">Giao Dịch</div><div class="stat-val c-cyan" id="st-hist">...</div><div class="stat-sub">Tổng giao dịch</div></div>
+      </div>
+
+      <div class="sep">━━━ HOẠT ĐỘNG GẦN ĐÂY ━━━</div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-icon">📋</span><span class="panel-title">Giao Dịch Gần Nhất</span><span class="panel-sub" id="dash-hist-count">0 giao dịch</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Loại</th><th>Email</th><th>Số Tiền</th><th>Thời Gian</th></tr></thead>
+            <tbody id="dash-hist-body"><tr class="empty-row"><td colspan="4">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div id="page-users" style="display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-icon">👥</span>
+          <span class="panel-title">Quản Lý Tài Khoản</span>
+          <span class="panel-sub" id="users-count">0 users</span>
+        </div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Email</th><th>Số Dư</th><th>IP</th><th>Ngày Đăng Ký</th><th>Hành Động</th></tr></thead>
+            <tbody id="users-body"><tr class="empty-row"><td colspan="5">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div id="page-products" style="display:none">
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head"><span class="panel-icon">➕</span><span class="panel-title">Thêm Sản Phẩm Mới</span></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-field"><label>Tên Sản Phẩm *</label><input type="text" id="p-name" placeholder="Tên sản phẩm..."></div>
+            <div class="form-field"><label>Mã Sản Phẩm *</label><input type="text" id="p-code" placeholder="vd: HOOK001"></div>
+            <div class="form-field"><label>Giá (VNĐ) *</label><input type="number" id="p-price" placeholder="50000" min="0"></div>
+            <div class="form-field"><label>Link Ảnh</label><input type="url" id="p-img" placeholder="https://..."></div>
+            <div class="form-field form-full"><label>Link Tool / File</label><input type="url" id="p-link" placeholder="https://..."></div>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="addProduct()">➕ Thêm Sản Phẩm</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep">━━━ DANH SÁCH SẢN PHẨM ━━━</div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-icon">📦</span><span class="panel-title">Sản Phẩm Đang Bán</span><span class="panel-sub" id="prod-count">0 sản phẩm</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Tên</th><th>Mã</th><th>Giá</th><th>Link Tool</th><th>Ngày Thêm</th><th>Xoá</th></tr></thead>
+            <tbody id="prod-body"><tr class="empty-row"><td colspan="6">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING -->
+    <div id="page-pending" style="display:none">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-icon">⏳</span><span class="panel-title">Duyệt Yêu Cầu Nạp Tiền</span><span class="panel-sub" id="pend-count">0 yêu cầu</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Email</th><th>Thời Gian Gửi</th><th>Trạng Thái</th><th>Nhập Số Tiền & Duyệt</th></tr></thead>
+            <tbody id="pend-body"><tr class="empty-row"><td colspan="4">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="page-history" style="display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-icon">📜</span>
+          <span class="panel-title">Toàn Bộ Lịch Sử Giao Dịch</span>
+          <span class="panel-sub" id="hist-count">0 giao dịch</span>
+        </div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Loại</th><th>Email</th><th>Sản Phẩm / Ghi Chú</th><th>Số Tiền</th><th>Thời Gian</th></tr></thead>
+            <tbody id="hist-body"><tr class="empty-row"><td colspan="5">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sep">━━━ LỊCH SỬ CỘNG TIỀN ADMIN ━━━</div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-icon">💰</span><span class="panel-title">Lịch Sử Cộng Tiền</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Email</th><th>Số Tiền</th><th>Loại</th><th>Thời Gian</th></tr></thead>
+            <tbody id="topup-hist-body"><tr class="empty-row"><td colspan="4">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPUP MODAL -->
+<div class="modal-bg" id="modal-topup" style="display:none" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>💰 Cộng Tiền</h3>
+    <div class="modal-email" id="modal-email-label"></div>
+    <input type="number" class="modal-input" id="modal-amount" placeholder="Nhập số tiền VNĐ..." min="1000">
+    <div class="modal-hint">Tối thiểu 1,000đ · Nhấn Enter để xác nhận</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Huỷ</button>
+      <button class="modal-confirm" onclick="confirmTopup()">💰 Cộng Tiền Ngay</button>
+    </div>
+  </div>
+</div>
+
+<div class="tw" id="tw"></div>
+<audio id="bgm" src="https://on.soundcloud.com/Pokx7oUdDrEHbYjwbq" loop autoplay></audio>
+
+<script>
+const API = '';
+let TOKEN = '';
+let topupTarget = null;
+
+const fmt = n => new Intl.NumberFormat('vi-VN').format(n||0) + 'đ';
+const timeStr = t => new Date(t).toLocaleString('vi-VN');
+
+// ── CLOCK ──
+setInterval(() => {
+  const el = document.getElementById('nav-time');
+  if(el) el.textContent = new Date().toLocaleTimeString('vi-VN');
+}, 1000);
+
+// ── TOAST ──
+function toast(msg, type='ok') {
+  const w = document.getElementById('tw');
+  const el = document.createElement('div');
+  el.className = 'ti ti-' + type;
+  el.textContent = msg;
+  w.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+// ── LOGIN ──
+async function doAdminLogin() {
+  const pass = document.getElementById('admin-pass').value;
+  const btn  = document.getElementById('login-btn');
+  const err  = document.getElementById('login-err');
+  if(!pass) { err.textContent='❌ Nhập mật khẩu!'; err.style.display='block'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Đang xác thực...';
+  try {
+    const r = await fetch(API+'/api/admin/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({pass})
+    });
+    const d = await r.json();
+    if(!d.ok) { err.textContent='❌ '+d.msg; err.style.display='block'; return; }
+    TOKEN = d.token;
+    sessionStorage.setItem('adminToken', TOKEN);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+    loadDashboard();
+  } catch {
+    err.textContent = '❌ Không kết nối được server!';
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔐 Đăng Nhập Admin';
+  }
+}
+
+// Check existing session
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('adminToken');
+  if(saved) {
+    TOKEN = saved;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+    loadDashboard();
+  }
+  document.getElementById('admin-pass').addEventListener('keydown', e => { if(e.key==='Enter') doAdminLogin(); });
+  document.getElementById('modal-amount').addEventListener('keydown', e => { if(e.key==='Enter') confirmTopup(); });
+  document.addEventListener('click', () => document.getElementById('bgm').play().catch(()=>{}), {once:true});
+});
+
+function doLogout() { sessionStorage.removeItem('adminToken'); location.reload(); }
+
+// ── API HELPER ──
+async function api(path, opts={}) {
+  const headers = { 'Content-Type':'application/json', 'x-admin-token': TOKEN, ...opts.headers };
+  const r = await fetch(API+path, {...opts, headers});
+  return r.json();
+}
+
+// ── PAGE SWITCH ──
+function showPage(p) {
+  ['dashboard','users','products','pending','history'].forEach(x =>
+    document.getElementById('page-'+x).style.display = x===p ? 'block' : 'none'
+  );
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  if(p==='dashboard') loadDashboard();
+  if(p==='users') loadUsers();
+  if(p==='products') loadProducts();
+  if(p==='pending') loadPending();
+  if(p==='history') loadHistory();
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  try {
+    const [users, items, hist, topupH] = await Promise.all([
+      api('/api/admin/users'),
+      api('/api/admin/products'),
+      api('/api/admin/history'),
+      api('/api/admin/topup-history'),
+    ]);
+    document.getElementById('st-users').textContent = users.data?.length || 0;
+    document.getElementById('st-items').textContent = items.data?.length || 0;
+    document.getElementById('st-hist').textContent = hist.data?.length || 0;
+    const totalTop = (topupH.data||[]).reduce((s,h)=>s+(h.amount||0),0);
+    document.getElementById('st-bal').textContent = fmt(totalTop);
+
+    const recent = (hist.data||[]).slice(0,8);
+    document.getElementById('dash-hist-count').textContent = (hist.data||[]).length + ' giao dịch';
+    const tbody = document.getElementById('dash-hist-body');
+    if(!recent.length) { tbody.innerHTML='<tr class="empty-row"><td colspan="4">Chưa có giao dịch</td></tr>'; return; }
+    tbody.innerHTML = recent.map(h => {
+      const isMua=h.type==='mua', isPend=h.type==='nap_pending';
+      const badge = isMua?'<span class="badge b-blue">MUA</span>':isPend?'<span class="badge b-amber">PENDING</span>':'<span class="badge b-green">NẠP</span>';
+      const amt = isPend?'<span style="color:var(--amber)">Pending</span>':`<span style="color:${h.amount>0?'var(--success)':'var(--danger)'}; font-weight:700">${h.amount>0?'+':''}${fmt(h.amount)}</span>`;
+      return `<tr><td>${badge}</td><td class="email-cell">${h.email}</td><td>${amt}</td><td class="time-cell">${timeStr(h.time)}</td></tr>`;
+    }).join('');
+  } catch { toast('❌ Lỗi tải dashboard', 'err'); }
+}
+
+// ── USERS ──
+async function loadUsers() {
+  try {
+    const d = await api('/api/admin/users');
+    const users = d.data || [];
+    document.getElementById('users-count').textContent = users.length + ' users';
+    const tbody = document.getElementById('users-body');
+    if(!users.length) { tbody.innerHTML='<tr class="empty-row"><td colspan="5">Chưa có user nào</td></tr>'; return; }
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td class="email-cell">${u.email}</td>
+        <td class="bal-cell">${fmt(u.balance)}</td>
+        <td class="ip-cell">${u.ip||'unknown'}</td>
+        <td class="time-cell">${timeStr(u.created)}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-green" onclick="openTopup('${u.email}')">💰 Cộng</button>
+          <button class="btn btn-amber" onclick="openDeduct('${u.email}')">➖ Trừ</button>
+          <button class="btn btn-red" onclick="deleteUser('${u.email}')">🗑 Xoá</button>
+        </td>
+      </tr>`).join('');
+  } catch { toast('❌ Lỗi tải users','err'); }
+}
+
+async function deleteUser(email) {
+  if(!confirm(`Xoá tài khoản: ${email}?\nHành động không thể hoàn tác!`)) return;
+  try {
+    const d = await api('/api/admin/users/'+encodeURIComponent(email), {method:'DELETE', body:JSON.stringify({adminToken:TOKEN})});
+    if(!d.ok) { toast('❌ '+d.msg,'err'); return; }
+    toast('✅ Đã xoá '+email);
+    loadUsers();
+  } catch { toast('❌ Lỗi server','err'); }
+}
+
+// ── TOPUP ──
+let isDeduct = false;
+function openTopup(email) {
+  isDeduct = false;
+  topupTarget = email;
+  document.getElementById('modal-email-label').textContent = '👤 ' + email;
+  document.getElementById('modal-amount').value = '';
+  document.getElementById('modal-amount').placeholder = 'Nhập số tiền cộng (VNĐ)...';
+  document.querySelector('.modal h3').textContent = '💰 Cộng Tiền';
+  document.querySelector('.modal-confirm').textContent = '💰 Cộng Tiền Ngay';
+  document.querySelector('.modal-confirm').style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+  document.getElementById('modal-topup').style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-amount').focus(), 100);
+}
+function openDeduct(email) {
+  isDeduct = true;
+  topupTarget = email;
+  document.getElementById('modal-email-label').textContent = '👤 ' + email;
+  document.getElementById('modal-amount').value = '';
+  document.getElementById('modal-amount').placeholder = 'Nhập số tiền trừ (VNĐ)...';
+  document.querySelector('.modal h3').textContent = '➖ Trừ Tiền';
+  document.querySelector('.modal-confirm').textContent = '➖ Trừ Tiền';
+  document.querySelector('.modal-confirm').style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+  document.getElementById('modal-topup').style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-amount').focus(), 100);
+}
+function closeModal() {
+  document.getElementById('modal-topup').style.display = 'none';
+  topupTarget = null;
+}
+async function confirmTopup() {
+  const amt = parseInt(document.getElementById('modal-amount').value) || 0;
+  if(amt < 1000) { toast('❌ Tối thiểu 1,000đ','err'); return; }
+  try {
+    const endpoint = isDeduct ? '/api/admin/deduct' : '/api/admin/topup';
+    const d = await api(endpoint, {
+      method:'POST',
+      body: JSON.stringify({adminToken:TOKEN, targetEmail:topupTarget, amount:amt})
+    });
+    if(!d.ok) { toast('❌ '+d.msg,'err'); return; }
+    closeModal();
+    toast(`✅ ${isDeduct?'Trừ':'Cộng'} ${fmt(amt)} cho ${topupTarget}`);
+    loadUsers();
+  } catch { toast('❌ Lỗi server','err'); }
+}
+
+// ── PRODUCTS ──
+async function loadProducts() {
+  try {
+    const d = await api('/api/admin/products');
+    const items = d.data || [];
+    document.getElementById('prod-count').textContent = items.length + ' sản phẩm';
+    const tbody = document.getElementById('prod-body');
+    if(!items.length) { tbody.innerHTML='<tr class="empty-row"><td colspan="6">Chưa có sản phẩm</td></tr>'; return; }
+    tbody.innerHTML = items.map(it => `
+      <tr>
+        <td style="font-weight:700">${it.name}</td>
+        <td><span class="badge b-blue">#${it.code}</span></td>
+        <td class="bal-cell">${fmt(it.price)}</td>
+        <td>${it.link?`<a href="${it.link}" target="_blank" style="color:var(--accent);font-size:11px;font-family:'JetBrains Mono',monospace;">Link →</a>`:'<span style="color:var(--muted)">Không có</span>'}</td>
+        <td class="time-cell">${timeStr(it.added)}</td>
+        <td><button class="btn btn-red" onclick="deleteProduct('${it.code}')">🗑 Xoá</button></td>
+      </tr>`).join('');
+  } catch { toast('❌ Lỗi tải sản phẩm','err'); }
+}
+
+async function addProduct() {
+  const name  = document.getElementById('p-name').value.trim();
+  const code  = document.getElementById('p-code').value.trim();
+  const price = parseInt(document.getElementById('p-price').value) || 0;
+  const img   = document.getElementById('p-img').value.trim();
+  const link  = document.getElementById('p-link').value.trim();
+  if(!name||!code||!price) { toast('❌ Nhập đủ tên, mã và giá','err'); return; }
+  try {
+    const d = await api('/api/admin/products', {
+      method:'POST',
+      body: JSON.stringify({adminToken:TOKEN, name, code, price, img, link})
+    });
+    if(!d.ok) { toast('❌ '+d.msg,'err'); return; }
+    ['p-name','p-code','p-price','p-img','p-link'].forEach(id => document.getElementById(id).value='');
+    toast('✅ Đã thêm sản phẩm "'+name+'"');
+    loadProducts();
+  } catch { toast('❌ Lỗi server','err'); }
+}
+
+async function deleteProduct(code) {
+  if(!confirm('Xoá sản phẩm #'+code+'?')) return;
+  try {
+    const d = await api('/api/admin/products/'+code, {method:'DELETE', body:JSON.stringify({adminToken:TOKEN})});
+    if(!d.ok) { toast('❌ '+d.msg,'err'); return; }
+    toast('✅ Đã xoá sản phẩm #'+code);
+    loadProducts();
+  } catch { toast('❌ Lỗi server','err'); }
+}
+
+// ── PENDING ──
+async function loadPending() {
+  try {
+    const d = await api('/api/admin/pending');
+    const list = d.data || [];
+    document.getElementById('pend-count').textContent = list.length + ' yêu cầu';
+    const tbody = document.getElementById('pend-body');
+    if(!list.length) { tbody.innerHTML='<tr class="empty-row"><td colspan="4">✅ Không có yêu cầu nào đang chờ</td></tr>'; return; }
+    tbody.innerHTML = list.map((h,i) => `
+      <tr>
+        <td class="email-cell">${h.email}</td>
+        <td class="time-cell">${timeStr(h.time)}</td>
+        <td><span class="badge b-amber">⏳ PENDING</span></td>
+        <td style="display:flex;gap:7px;align-items:center;">
+          <input type="number" id="pend-amt-${i}" placeholder="Số tiền VNĐ" min="1000"
+            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 10px;color:#fff;font-size:12px;width:130px;font-family:'JetBrains Mono',monospace;outline:none;">
+          <button class="btn btn-green" onclick="approvePending('${h.email}',${i})">✅ Duyệt</button>
+        </td>
+      </tr>`).join('');
+  } catch { toast('❌ Lỗi tải danh sách','err'); }
+}
+
+async function approvePending(email, idx) {
+  const amt = parseInt(document.getElementById('pend-amt-'+idx).value) || 0;
+  if(amt < 1000) { toast('❌ Nhập số tiền tối thiểu 1,000đ','err'); return; }
+  try {
+    const d = await api('/api/admin/approve', {
+      method:'POST',
+      body: JSON.stringify({adminToken:TOKEN, email, amount:amt, histId:idx})
+    });
+    if(!d.ok) { toast('❌ '+d.msg,'err'); return; }
+    toast('✅ Đã duyệt '+fmt(amt)+' cho '+email);
+    loadPending();
+  } catch { toast('❌ Lỗi server','err'); }
+}
+
+// ── HISTORY ──
+async function loadHistory() {
+  try {
+    const [histD, topupD] = await Promise.all([
+      api('/api/admin/history'),
+      api('/api/admin/topup-history'),
+    ]);
+    const hist = histD.data || [];
+    const topup = topupD.data || [];
+    document.getElementById('hist-count').textContent = hist.length + ' giao dịch';
+
+    const tbody = document.getElementById('hist-body');
+    if(!hist.length) { tbody.innerHTML='<tr class="empty-row"><td colspan="5">Chưa có giao dịch</td></tr>'; }
+    else tbody.innerHTML = hist.map(h => {
+      const isMua=h.type==='mua', isPend=h.type==='nap_pending';
+      const badge=isMua?'<span class="badge b-blue">MUA</span>':isPend?'<span class="badge b-amber">PENDING</span>':'<span class="badge b-green">NẠP</span>';
+      const note = isMua ? (h.name||'') : (h.note||'');
+      const amt = isPend?'<span style="color:var(--amber)">Pending</span>':`<span style="color:${h.amount>0?'var(--success)':'var(--danger)'};font-weight:700">${h.amount>0?'+':''}${fmt(h.amount)}</span>`;
+      return `<tr><td>${badge}</td><td class="email-cell">${h.email}</td><td style="font-size:12px;color:var(--muted)">${note}</td><td>${amt}</td><td class="time-cell">${timeStr(h.time)}</td></tr>`;
+    }).join('');
+
+    const tbody2 = document.getElementById('topup-hist-body');
+    if(!topup.length) { tbody2.innerHTML='<tr class="empty-row"><td colspan="4">Chưa có lịch sử cộng tiền</td></tr>'; }
+    else tbody2.innerHTML = topup.map(h => {
+      const type = h.type==='approve'?'<span class="badge b-amber">DUYỆT</span>':'<span class="badge b-green">CỘNG</span>';
+      return `<tr><td class="email-cell">${h.email}</td><td class="bal-cell">+${fmt(h.amount)}</td><td>${type}</td><td class="time-cell">${timeStr(h.time)}</td></tr>`;
+    }).join('');
+  } catch { toast('❌ Lỗi tải lịch sử','err'); }
+}
+</script>
+</body>
+</html>
